@@ -1,5 +1,7 @@
 from django.db.models import Count, F
-from rest_framework import viewsets, status
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -13,7 +15,6 @@ from terminal.models import (
     Route,
     Flight,
     Order,
-    Ticket
 )
 from terminal.permissions import IsAdminOrIfAuthenticatedReadOnly
 from terminal.serializers import (
@@ -98,7 +99,30 @@ class RouteViewSet(viewsets.ModelViewSet):
             return RouteListSerializer
         return RouteSerializer
 
-class FlightViewSet(viewsets.ModelViewSet):
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="source",
+                description="Filter routes by source city (ex. ?source=Lviv)",
+                type=OpenApiTypes.STR,
+            ),
+            OpenApiParameter(
+                name="destination",
+                description="Filter routes by destination city (ex. ?destination=London)",
+                type=OpenApiTypes.STR,
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """Get list of airports"""
+        return super().list(request, *args, **kwargs)
+
+class FlightViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet,
+):
     queryset = Flight.objects.all()
     serializer_class = FlightSerializer
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
@@ -149,6 +173,34 @@ class FlightViewSet(viewsets.ModelViewSet):
             return FlightDetailSerializer
 
         return FlightSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="departure_time",
+                description="Filter flights by departure time (ex. ?departure_time=01-01-2026)",
+                type=OpenApiTypes.DATE,
+            ),
+            OpenApiParameter(
+                name="route",
+                description="Filter flights by routes (ex. ?route=1,2)",
+                type=OpenApiTypes.INT,
+            ),
+            OpenApiParameter(
+                name="source",
+                description="Filter flights by source city (ex. ?source=Lviv)",
+                type=OpenApiTypes.STR,
+            ),
+            OpenApiParameter(
+                name="destination",
+                description="Filter flights by destination city (ex. ?destination=London)",
+                type=OpenApiTypes.STR,
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """Get list of airports"""
+        return super().list(request, *args, **kwargs)
 
 
 class OrderPagination(PageNumberPagination):
