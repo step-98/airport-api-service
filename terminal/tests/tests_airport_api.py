@@ -24,6 +24,7 @@ from terminal.serializers import (
 FLIGHT_URL = reverse("terminal:flight-list")
 ROUTES_URL = reverse("terminal:route-list")
 
+
 def sample_crew(**params) -> Crew:
     defaults = {
         "first_name": "Ivan",
@@ -33,12 +34,14 @@ def sample_crew(**params) -> Crew:
     defaults.update(params)
     return Crew.objects.create(**defaults)
 
+
 def sample_airplane_type(**params) -> AirplaneType:
     defaults = {
         "name": "Boeing",
     }
     defaults.update(params)
     return AirplaneType.objects.create(**defaults)
+
 
 def sample_airplane(**params) -> Airplane:
     airplane_type = sample_airplane_type(**params)
@@ -51,6 +54,7 @@ def sample_airplane(**params) -> Airplane:
     defaults.update(params)
     return Airplane.objects.create(**defaults)
 
+
 def sample_airport(**params) -> Airport:
     defaults = {
         "name": "LV",
@@ -58,6 +62,7 @@ def sample_airport(**params) -> Airport:
     }
     defaults.update(params)
     return Airport.objects.create(**defaults)
+
 
 def sample_route(**params) -> Route:
     source = sample_airport()
@@ -69,6 +74,7 @@ def sample_route(**params) -> Route:
     }
     defaults.update(params)
     return Route.objects.create(**defaults)
+
 
 def sample_flight(**params) -> Flight:
     route = sample_route()
@@ -82,8 +88,10 @@ def sample_flight(**params) -> Flight:
     defaults.update(params)
     return Flight.objects.create(**defaults)
 
+
 def detail_url(flight_id):
     return reverse("terminal:flight-detail", args=[flight_id])
+
 
 class UnauthenticatedTerminalApiTests(TestCase):
     def setUp(self):
@@ -92,6 +100,7 @@ class UnauthenticatedTerminalApiTests(TestCase):
     def test_auth_required(self):
         res = self.client.get(FLIGHT_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 class AuthenticatedTerminalApiTests(TestCase):
     def setUp(self):
@@ -110,7 +119,8 @@ class AuthenticatedTerminalApiTests(TestCase):
         res = self.client.get(FLIGHT_URL)
         flights = Flight.objects.annotate(
             tickets_available=(
-                F("airplane__rows") * F("airplane__seats_in_row") - Count("tickets")
+                F("airplane__rows") * F("airplane__seats_in_row")
+                - Count("tickets")
             )
         ).prefetch_related("crew")
         serializer = FlightListSerializer(flights, many=True)
@@ -126,13 +136,15 @@ class AuthenticatedTerminalApiTests(TestCase):
 
         flight1 = Flight.objects.annotate(
             tickets_available=(
-                    F("airplane__rows") * F("airplane__seats_in_row") - Count("tickets")
+                    F("airplane__rows") * F("airplane__seats_in_row")
+                    - Count("tickets")
             )
         ).prefetch_related("crew").get(id=flight1.id)
 
         flight2 = Flight.objects.annotate(
             tickets_available=(
-                    F("airplane__rows") * F("airplane__seats_in_row") - Count("tickets")
+                    F("airplane__rows") * F("airplane__seats_in_row")
+                    - Count("tickets")
             )
         ).prefetch_related("crew").get(id=flight2.id)
 
@@ -151,13 +163,15 @@ class AuthenticatedTerminalApiTests(TestCase):
 
         flight1 = Flight.objects.annotate(
             tickets_available=(
-                    F("airplane__rows") * F("airplane__seats_in_row") - Count("tickets")
+                    F("airplane__rows") * F("airplane__seats_in_row")
+                    - Count("tickets")
             )
         ).prefetch_related("crew").get(id=flight1.id)
 
         flight2 = Flight.objects.annotate(
             tickets_available=(
-                    F("airplane__rows") * F("airplane__seats_in_row") - Count("tickets")
+                    F("airplane__rows") * F("airplane__seats_in_row")
+                    - Count("tickets")
             )
         ).prefetch_related("crew").get(id=flight2.id)
 
@@ -178,13 +192,15 @@ class AuthenticatedTerminalApiTests(TestCase):
 
         flight1 = Flight.objects.annotate(
             tickets_available=(
-                    F("airplane__rows") * F("airplane__seats_in_row") - Count("tickets")
+                    F("airplane__rows") * F("airplane__seats_in_row")
+                    - Count("tickets")
             )
         ).prefetch_related("crew").get(id=flight1.id)
 
         flight2 = Flight.objects.annotate(
             tickets_available=(
-                    F("airplane__rows") * F("airplane__seats_in_row") - Count("tickets")
+                    F("airplane__rows") * F("airplane__seats_in_row")
+                    - Count("tickets")
             )
         ).prefetch_related("crew").get(id=flight2.id)
 
@@ -195,7 +211,7 @@ class AuthenticatedTerminalApiTests(TestCase):
         self.assertIn(serializer1.data, res.data)
         self.assertNotIn(serializer2.data, res.data)
 
-    def test_filter_flights_by_source(self):
+    def test_filter_flights_by_destination(self):
         airport = sample_airport(name="LN", closest_big_city="London")
         route = sample_route(destination=airport)
         flight1 = sample_flight(route=route)
@@ -205,13 +221,15 @@ class AuthenticatedTerminalApiTests(TestCase):
 
         flight1 = Flight.objects.annotate(
             tickets_available=(
-                    F("airplane__rows") * F("airplane__seats_in_row") - Count("tickets")
+                    F("airplane__rows") * F("airplane__seats_in_row")
+                    - Count("tickets")
             )
         ).prefetch_related("crew").get(id=flight1.id)
 
         flight2 = Flight.objects.annotate(
             tickets_available=(
-                    F("airplane__rows") * F("airplane__seats_in_row") - Count("tickets")
+                    F("airplane__rows") * F("airplane__seats_in_row")
+                    - Count("tickets")
             )
         ).prefetch_related("crew").get(id=flight2.id)
 
@@ -230,7 +248,8 @@ class AuthenticatedTerminalApiTests(TestCase):
         res = self.client.get(url)
         flight = Flight.objects.annotate(
             tickets_available=(
-                    F("airplane__rows") * F("airplane__seats_in_row") - Count("tickets")
+                    F("airplane__rows") * F("airplane__seats_in_row")
+                    - Count("tickets")
             )
         ).prefetch_related("crew").get(id=flight.id)
         serializer = FlightDetailSerializer(flight)
@@ -289,4 +308,3 @@ class AdminFlightApiTest(TestCase):
         url = detail_url(airport.id)
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-

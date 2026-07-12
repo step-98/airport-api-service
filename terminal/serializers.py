@@ -1,8 +1,15 @@
-from enum import unique
-
 from django.db import transaction
 from rest_framework import serializers
-from terminal.models import Route, Airport, Airplane, AirplaneType, Crew, Flight, Ticket, Order
+from terminal.models import (
+    Route,
+    Airport,
+    Airplane,
+    AirplaneType,
+    Crew,
+    Flight,
+    Ticket,
+    Order
+)
 
 
 class CrewSerializer(serializers.ModelSerializer):
@@ -15,6 +22,7 @@ class AirplaneTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = AirplaneType
         fields = ("id", "name")
+
 
 class AirplaneImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,7 +37,14 @@ class AirplaneSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Airplane
-        fields = ("id", "name", "rows", "seats_in_row", "airplane_type", "image")
+        fields = (
+            "id",
+            "name",
+            "rows",
+            "seats_in_row",
+            "airplane_type",
+            "image"
+        )
 
 
 class AirplaneListSerializer(AirplaneSerializer):
@@ -37,6 +52,7 @@ class AirplaneListSerializer(AirplaneSerializer):
         source="airplane_type.name",
         read_only=True,
     )
+
 
 class AirportSerializer(serializers.ModelSerializer):
     class Meta:
@@ -90,15 +106,24 @@ class FlightListSerializer(serializers.ModelSerializer):
         source="airplane.name",
         read_only=True,
     )
-    departure_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
-    arrival_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    departure_time = serializers.DateTimeField(
+        format="%Y-%m-%d %H:%M:%S",
+        read_only=True
+    )
+    arrival_time = serializers.DateTimeField(
+        format="%Y-%m-%d %H:%M:%S",
+        read_only=True
+    )
     crew = serializers.SlugRelatedField(
         many=True,
         slug_field="full_name",
         read_only=True,
     )
     tickets_available = serializers.IntegerField(read_only=True)
-    airplane_image = serializers.ImageField(source="airplane.image", read_only=True)
+    airplane_image = serializers.ImageField(
+        source="airplane.image",
+        read_only=True
+    )
 
     class Meta:
         model = Flight
@@ -113,13 +138,19 @@ class FlightListSerializer(serializers.ModelSerializer):
             "airplane_image"
         )
 
+
 class FlightDetailSerializer(FlightSerializer):
     route = RouteListSerializer(read_only=False)
     airplane = AirplaneSerializer(read_only=False)
-    departure_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
-    arrival_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    departure_time = serializers.DateTimeField(
+        format="%Y-%m-%d %H:%M:%S",
+        read_only=True
+    )
+    arrival_time = serializers.DateTimeField(
+        format="%Y-%m-%d %H:%M:%S",
+        read_only=True
+    )
     crew = CrewSerializer(many=True, read_only=True, allow_empty=False)
-
 
 
 class TicketSerializer(serializers.ModelSerializer):
@@ -141,7 +172,9 @@ class TicketSerializer(serializers.ModelSerializer):
         if self.instance:
             qs = qs.exclude(pk=self.instance.pk)
         if qs.exists():
-            raise serializers.ValidationError("This seat is already taken on this flight")
+            raise serializers.ValidationError(
+                "This seat is already taken on this flight"
+            )
         return data
 
     class Meta:
@@ -163,10 +196,14 @@ class OrderSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         tickets_list = []
         for ticket in attrs["tickets"]:
-            unique_ticket = (ticket["row"], ticket["seat"], ticket["flight"].id)
+            unique_ticket = (
+                ticket["row"], ticket["seat"], ticket["flight"].id
+            )
             tickets_list.append(unique_ticket)
         if len(set(tickets_list)) != len(tickets_list):
-            raise serializers.ValidationError("This seat is already taken on this flight")
+            raise serializers.ValidationError(
+                "This seat is already taken on this flight"
+            )
         return attrs
 
     def create(self, validated_data):

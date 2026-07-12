@@ -18,11 +18,13 @@ class Crew(models.Model):
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
+
 class AirplaneType(models.Model):
     name = models.CharField(max_length=64)
 
     def __str__(self):
         return f"{self.name}"
+
 
 def airplane_image_path(instance: "Airplane", filename: str):
     _, ext = os.path.splitext(filename)
@@ -31,11 +33,16 @@ def airplane_image_path(instance: "Airplane", filename: str):
         f"{slugify(instance.name)}-{uuid.uuid4()}{ext}"
     )
 
+
 class Airplane(models.Model):
     name = models.CharField(max_length=64)
     rows = models.IntegerField()
     seats_in_row = models.IntegerField()
-    airplane_type = models.ForeignKey(AirplaneType, on_delete=models.PROTECT, related_name="airplanes")
+    airplane_type = models.ForeignKey(
+        AirplaneType,
+        on_delete=models.PROTECT,
+        related_name="airplanes"
+    )
     image = models.ImageField(upload_to=airplane_image_path, null=True)
 
     def __str__(self):
@@ -55,8 +62,16 @@ class Airport(models.Model):
 
 
 class Route(models.Model):
-    source = models.ForeignKey(Airport, on_delete=models.PROTECT, related_name="source_routes")
-    destination = models.ForeignKey(Airport, on_delete=models.PROTECT, related_name="destination_routes")
+    source = models.ForeignKey(
+        Airport,
+        on_delete=models.PROTECT,
+        related_name="source_routes"
+    )
+    destination = models.ForeignKey(
+        Airport,
+        on_delete=models.PROTECT,
+        related_name="destination_routes"
+    )
     distance = models.IntegerField()
 
     class Meta:
@@ -69,8 +84,16 @@ class Route(models.Model):
 
 
 class Flight(models.Model):
-    route = models.ForeignKey(Route, on_delete=models.PROTECT, related_name="flights")
-    airplane = models.ForeignKey(Airplane, on_delete=models.PROTECT, related_name="flights")
+    route = models.ForeignKey(
+        Route,
+        on_delete=models.PROTECT,
+        related_name="flights"
+    )
+    airplane = models.ForeignKey(
+        Airplane,
+        on_delete=models.PROTECT,
+        related_name="flights"
+    )
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
     crew = models.ManyToManyField(Crew, related_name="flights")
@@ -102,8 +125,16 @@ class Order(models.Model):
 class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
-    flight = models.ForeignKey(Flight, on_delete=models.CASCADE, related_name="tickets")
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="tickets")
+    flight = models.ForeignKey(
+        Flight,
+        on_delete=models.CASCADE,
+        related_name="tickets"
+    )
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="tickets"
+    )
 
     @staticmethod
     def validate_ticket(row, seat, airplane, error_to_raise):
@@ -121,7 +152,6 @@ class Ticket(models.Model):
                                           f"(1, {count_attrs})"
                     }
                 )
-
 
     def clean(self):
         Ticket.validate_ticket(

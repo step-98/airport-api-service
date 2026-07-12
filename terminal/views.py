@@ -88,13 +88,16 @@ class RouteViewSet(viewsets.ModelViewSet):
         destination = self.request.query_params.get("destination", None)
 
         if source:
-            queryset = queryset.filter(source__closest_big_city__icontains=source)
+            queryset = queryset.filter(
+                source__closest_big_city__icontains=source
+            )
 
         if destination:
-            queryset = queryset.filter(destination__closest_big_city__icontains=destination)
+            queryset = queryset.filter(
+                destination__closest_big_city__icontains=destination
+            )
 
         return queryset
-
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -110,7 +113,8 @@ class RouteViewSet(viewsets.ModelViewSet):
             ),
             OpenApiParameter(
                 name="destination",
-                description="Filter routes by destination city (ex. ?destination=London)",
+                description="Filter routes by destination city"
+                            " (ex. ?destination=London)",
                 type=OpenApiTypes.STR,
             )
         ]
@@ -118,6 +122,7 @@ class RouteViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         """Get list of routes"""
         return super().list(request, *args, **kwargs)
+
 
 class FlightViewSet(
     mixins.ListModelMixin,
@@ -145,21 +150,30 @@ class FlightViewSet(
         destination = self.request.query_params.get("destination", None)
 
         if departure_time:
-            queryset = queryset.filter(departure_time__icontains=departure_time)
+            queryset = queryset.filter(
+                departure_time__icontains=departure_time
+            )
 
         if route:
             route_ids = self._params_to_ints(route)
             queryset = queryset.filter(route_id__in=route_ids)
 
         if source:
-            queryset = queryset.filter(route__source__closest_big_city__icontains=source)
+            queryset = queryset.filter(
+                route__source__closest_big_city__icontains=source
+            )
 
         if destination:
-            queryset = queryset.filter(route__destination__closest_big_city__icontains=destination)
+            queryset = queryset.filter(
+                route__destination__closest_big_city__icontains=destination
+            )
 
         if self.action == "list":
             queryset = queryset.annotate(
-                tickets_available= F("airplane__rows") * F("airplane__seats_in_row") - Count("tickets")
+                tickets_available=(
+                        F("airplane__rows") * F("airplane__seats_in_row")
+                        - Count("tickets")
+                )
             ).prefetch_related("crew").distinct()
         elif self.action == "retrieve":
             queryset = queryset.prefetch_related("crew", "tickets")
@@ -179,7 +193,8 @@ class FlightViewSet(
         parameters=[
             OpenApiParameter(
                 name="departure_time",
-                description="Filter flights by departure time (ex. ?departure_time=01-01-2026)",
+                description="Filter flights by departure time"
+                            " (ex. ?departure_time=01-01-2026)",
                 type=OpenApiTypes.DATE,
             ),
             OpenApiParameter(
@@ -194,7 +209,8 @@ class FlightViewSet(
             ),
             OpenApiParameter(
                 name="destination",
-                description="Filter flights by destination city (ex. ?destination=London)",
+                description="Filter flights by destination city"
+                            " (ex. ?destination=London)",
                 type=OpenApiTypes.STR,
             )
         ]
@@ -207,6 +223,7 @@ class FlightViewSet(
 class OrderPagination(PageNumberPagination):
     page_size = 10
     max_page_size = 100
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
@@ -223,7 +240,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             "tickets__flight__route__source",
             "tickets__flight__route__destination",
         )
-
 
     def get_serializer_class(self):
         if self.action == "list":
