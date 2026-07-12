@@ -28,7 +28,7 @@ from terminal.serializers import (
     RouteListSerializer,
     FlightListSerializer,
     FlightDetailSerializer,
-    OrderListSerializer, AirplaneImageSerializer,
+    OrderListSerializer, AirplaneImageSerializer, AirplaneListSerializer,
 )
 
 
@@ -55,7 +55,7 @@ class AirplaneViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAdminUser,),
         url_path="upload-image",
     )
-    def upload_image(self, request):
+    def upload_image(self, request, pk=None):
         airplane = self.get_object()
         serializer = self.get_serializer(airplane, data=request.data)
         if serializer.is_valid():
@@ -66,6 +66,8 @@ class AirplaneViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == "upload_image":
             return AirplaneImageSerializer
+        elif self.action == "list":
+            return AirplaneListSerializer
         return AirplaneSerializer
 
 
@@ -114,7 +116,7 @@ class RouteViewSet(viewsets.ModelViewSet):
         ]
     )
     def list(self, request, *args, **kwargs):
-        """Get list of airports"""
+        """Get list of routes"""
         return super().list(request, *args, **kwargs)
 
 class FlightViewSet(
@@ -123,7 +125,6 @@ class FlightViewSet(
     mixins.CreateModelMixin,
     viewsets.GenericViewSet,
 ):
-    queryset = Flight.objects.all()
     serializer_class = FlightSerializer
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
@@ -199,7 +200,7 @@ class FlightViewSet(
         ]
     )
     def list(self, request, *args, **kwargs):
-        """Get list of airports"""
+        """Get list of flights"""
         return super().list(request, *args, **kwargs)
 
 

@@ -1,3 +1,5 @@
+from enum import unique
+
 from django.db import transaction
 from rest_framework import serializers
 from terminal.models import Route, Airport, Airplane, AirplaneType, Crew, Flight, Ticket, Order
@@ -21,15 +23,20 @@ class AirplaneImageSerializer(serializers.ModelSerializer):
 
 
 class AirplaneSerializer(serializers.ModelSerializer):
-    airplane_type = serializers.CharField(
-        source="airplane_type.name",
-        read_only=True,
+    airplane_type = serializers.PrimaryKeyRelatedField(
+        queryset=AirplaneType.objects.all()
     )
 
     class Meta:
         model = Airplane
         fields = ("id", "name", "rows", "seats_in_row", "airplane_type", "image")
 
+
+class AirplaneListSerializer(AirplaneSerializer):
+    airplane_type = serializers.CharField(
+        source="airplane_type.name",
+        read_only=True,
+    )
 
 class AirportSerializer(serializers.ModelSerializer):
     class Meta:
@@ -114,14 +121,27 @@ class FlightDetailSerializer(FlightSerializer):
     crew = CrewSerializer(many=True, read_only=True, allow_empty=False)
 
 
+
 class TicketSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         data = super(TicketSerializer, self).validate(attrs=attrs)
+        flight = attrs["flight"]
+        airplane = flight.airplane
         Ticket.validate_ticket(
             attrs["row"],
             attrs["seat"],
-            attrs["airplane"],
+            airplane,
+            serializers.ValidationError,
         )
+        qs = Ticket.objects.filter(
+            row=attrs["row"],
+            seat=attrs["seat"],
+            flight=flight,
+        )
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError("This seat is already taken on this flight")
         return data
 
     class Meta:
@@ -139,6 +159,15 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ("id", "created_at", "tickets")
+
+    def validate(self, attrs):
+        tickets_list = []
+        for ticket in attrs["tickets"]:
+            unique_ticket = (ticket["row"], ticket["seat"], ticket["flight"].id)
+            tickets_list.append(unique_ticket)
+        if len(set(tickets_list)) != len(tickets_list):
+            raise serializers.ValidationError("This seat is already taken on this flight")
+        return attrs
 
     def create(self, validated_data):
         with transaction.atomic():

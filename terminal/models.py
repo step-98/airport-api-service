@@ -28,7 +28,7 @@ def airplane_image_path(instance: "Airplane", filename: str):
     _, ext = os.path.splitext(filename)
     return os.path.join(
         "uploads/images/",
-        f"{slugify(instance.title)}-{uuid.uuid4()}{ext}"
+        f"{slugify(instance.name)}-{uuid.uuid4()}{ext}"
     )
 
 class Airplane(models.Model):
@@ -36,7 +36,7 @@ class Airplane(models.Model):
     rows = models.IntegerField()
     seats_in_row = models.IntegerField()
     airplane_type = models.ForeignKey(AirplaneType, on_delete=models.PROTECT, related_name="airplanes")
-    image = models.ImageField(upload_to="airplane_image_path/", null=True)
+    image = models.ImageField(upload_to=airplane_image_path, null=True)
 
     def __str__(self):
         return f"{self.name} {self.airplane_type.name}"
@@ -121,6 +121,7 @@ class Ticket(models.Model):
                                           f"(1, {count_attrs})"
                     }
                 )
+
 
     def clean(self):
         Ticket.validate_ticket(
