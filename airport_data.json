@@ -1,0 +1,339 @@
+[
+  {
+    "model": "terminal.airplanetype",
+    "pk": 1,
+    "fields": { "name": "Boeing 737" }
+  },
+  {
+    "model": "terminal.airplanetype",
+    "pk": 2,
+    "fields": { "name": "Airbus A320" }
+  },
+  {
+    "model": "terminal.airplanetype",
+    "pk": 3,
+    "fields": { "name": "Boeing 777" }
+  },
+  {
+    "model": "terminal.airplanetype",
+    "pk": 4,
+    "fields": { "name": "Airbus A350" }
+  },
+  {
+    "model": "terminal.airplanetype",
+    "pk": 5,
+    "fields": { "name": "Embraer E190" }
+  },
+  {
+    "model": "terminal.airplanetype",
+    "pk": 6,
+    "fields": { "name": "ATR 72" }
+  },
+
+  {
+    "model": "terminal.airplane",
+    "pk": 1,
+    "fields": {
+      "name": "Boeing 737-800 (UR-PSA)",
+      "rows": 32,
+      "seats_in_row": 6,
+      "airplane_type": 1
+    }
+  },
+  {
+    "model": "terminal.airplane",
+    "pk": 2,
+    "fields": {
+      "name": "Airbus A320neo (UR-XYZ)",
+      "rows": 30,
+      "seats_in_row": 6,
+      "airplane_type": 2
+    }
+  },
+  {
+    "model": "terminal.airplane",
+    "pk": 3,
+    "fields": {
+      "name": "Boeing 777-300ER (N123AA)",
+      "rows": 50,
+      "seats_in_row": 10,
+      "airplane_type": 3
+    }
+  },
+  {
+    "model": "terminal.airplane",
+    "pk": 4,
+    "fields": {
+      "name": "Airbus A350-900 (F-WZNW)",
+      "rows": 45,
+      "seats_in_row": 9,
+      "airplane_type": 4
+    }
+  },
+  {
+    "model": "terminal.airplane",
+    "pk": 5,
+    "fields": {
+      "name": "Embraer E195 (UR-EMB)",
+      "rows": 24,
+      "seats_in_row": 4,
+      "airplane_type": 5
+    }
+  },
+  {
+    "model": "terminal.airplane",
+    "pk": 6,
+    "fields": {
+      "name": "ATR 72-600 (UR-ATR)",
+      "rows": 18,
+      "seats_in_row": 4,
+      "airplane_type": 6
+    }
+  },
+
+  {
+    "model": "terminal.crew",
+    "pk": 1,
+    "fields": { "first_name": "Alexander", "last_name": "Petrenko" }
+  },
+  {
+    "model": "terminal.crew",
+    "pk": 2,
+    "fields": { "first_name": "Mary", "last_name": "Ivanenko" }
+  },
+  {
+    "model": "terminal.crew",
+    "pk": 3,
+    "fields": { "first_name": "Sergey", "last_name": "Kovalenko" }
+  },
+  {
+    "model": "terminal.crew",
+    "pk": 4,
+    "fields": { "first_name": "Helen", "last_name": "Melnyk" }
+  },
+  {
+    "model": "terminal.crew",
+    "pk": 5,
+    "fields": { "first_name": "Dmitry", "last_name": "Shevchenko" }
+  },
+  {
+    "model": "terminal.crew",
+    "pk": 6,
+    "fields": { "first_name": "Anna", "last_name": "Bondarenko" }
+  },
+
+  {
+    "model": "terminal.airport",
+    "pk": 1,
+    "fields": { "name": "Boryspil International Airport (KBP)", "closest_big_city": "Kyiv" }
+  },
+  {
+    "model": "terminal.airport",
+    "pk": 2,
+    "fields": { "name": "Lviv Danylo Halytskyi Airport (LWO)", "closest_big_city": "Lviv" }
+  },
+  {
+    "model": "terminal.airport",
+    "pk": 3,
+    "fields": { "name": "London Heathrow Airport (LHR)", "closest_big_city": "London" }
+  },
+  {
+    "model": "terminal.airport",
+    "pk": 4,
+    "fields": { "name": "John F. Kennedy International Airport (JFK)", "closest_big_city": "New York" }
+  },
+  {
+    "model": "terminal.airport",
+    "pk": 5,
+    "fields": { "name": "Charles de Gaulle Airport (CDG)", "closest_big_city": "Paris" }
+  },
+  {
+    "model": "terminal.airport",
+    "pk": 6,
+    "fields": { "name": "Warsaw Chopin Airport (WAW)", "closest_big_city": "Warsaw" }
+  },
+
+  {
+    "model": "terminal.route",
+    "pk": 1,
+    "fields": { "source": 1, "destination": 3, "distance": 2100 }
+  },
+  {
+    "model": "terminal.route",
+    "pk": 2,
+    "fields": { "source": 2, "destination": 6, "distance": 340 }
+  },
+  {
+    "model": "terminal.route",
+    "pk": 3,
+    "fields": { "source": 3, "destination": 4, "distance": 5500 }
+  },
+  {
+    "model": "terminal.route",
+    "pk": 4,
+    "fields": { "source": 1, "destination": 5, "distance": 2000 }
+  },
+  {
+    "model": "terminal.route",
+    "pk": 5,
+    "fields": { "source": 6, "destination": 3, "distance": 1450 }
+  },
+  {
+    "model": "terminal.route",
+    "pk": 6,
+    "fields": { "source": 5, "destination": 4, "distance": 5800 }
+  },
+
+  {
+    "model": "terminal.flight",
+    "pk": 1,
+    "fields": {
+      "route": 1,
+      "airplane": 1,
+      "departure_time": "2026-08-10T07:00:00Z",
+      "arrival_time": "2026-08-10T10:15:00Z",
+      "crew": [1, 2]
+    }
+  },
+  {
+    "model": "terminal.flight",
+    "pk": 2,
+    "fields": {
+      "route": 2,
+      "airplane": 5,
+      "departure_time": "2026-08-11T12:30:00Z",
+      "arrival_time": "2026-08-11T13:45:00Z",
+      "crew": [3, 4]
+    }
+  },
+  {
+    "model": "terminal.flight",
+    "pk": 3,
+    "fields": {
+      "route": 3,
+      "airplane": 3,
+      "departure_time": "2026-08-12T14:00:00Z",
+      "arrival_time": "2026-08-12T22:30:00Z",
+      "crew": [5, 6, 1]
+    }
+  },
+  {
+    "model": "terminal.flight",
+    "pk": 4,
+    "fields": {
+      "route": 4,
+      "airplane": 2,
+      "departure_time": "2026-08-13T06:00:00Z",
+      "arrival_time": "2026-08-13T09:20:00Z",
+      "crew": [2, 4]
+    }
+  },
+  {
+    "model": "terminal.flight",
+    "pk": 5,
+    "fields": {
+      "route": 5,
+      "airplane": 6,
+      "departure_time": "2026-08-14T17:15:00Z",
+      "arrival_time": "2026-08-14T19:45:00Z",
+      "crew": [3, 5]
+    }
+  },
+  {
+    "model": "terminal.flight",
+    "pk": 6,
+    "fields": {
+      "route": 6,
+      "airplane": 4,
+      "departure_time": "2026-08-15T11:00:00Z",
+      "arrival_time": "2026-08-15T19:10:00Z",
+      "crew": [1, 3, 6]
+    }
+  },
+  {
+    "model": "terminal.order",
+    "pk": 1,
+    "fields": {
+      "created_at": "2026-08-01T10:00:00Z",
+      "user": 1
+    }
+  },
+  {
+    "model": "terminal.order",
+    "pk": 2,
+    "fields": {
+      "created_at": "2026-08-02T14:30:00Z",
+      "user": 1
+    }
+  },
+  {
+    "model": "terminal.ticket",
+    "pk": 1,
+    "fields": {
+      "row": 5,
+      "seat": 2,
+      "flight": 1,
+      "order": 1
+    }
+  },
+  {
+    "model": "terminal.ticket",
+    "pk": 2,
+    "fields": {
+      "row": 5,
+      "seat": 3,
+      "flight": 1,
+      "order": 1
+    }
+  },
+  {
+    "model": "terminal.ticket",
+    "pk": 3,
+    "fields": {
+      "row": 10,
+      "seat": 1,
+      "flight": 2,
+      "order": 2
+    }
+  },
+  {
+    "model": "terminal.ticket",
+    "pk": 4,
+    "fields": {
+      "row": 12,
+      "seat": 4,
+      "flight": 3,
+      "order": 2
+    }
+  },
+  {
+    "model": "terminal.ticket",
+    "pk": 5,
+    "fields": {
+      "row": 20,
+      "seat": 6,
+      "flight": 4,
+      "order": 1
+    }
+  },
+  {
+    "model": "terminal.ticket",
+    "pk": 6,
+    "fields": {
+      "row": 15,
+      "seat": 2,
+      "flight": 5,
+      "order": 2
+    }
+  },
+  {
+    "model": "terminal.ticket",
+    "pk": 7,
+    "fields": {
+      "row": 30,
+      "seat": 5,
+      "flight": 6,
+      "order": 1
+    }
+  }
+]
